@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Банковская карта</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .form-section {
+            flex: 1;
+        }
+        .preview-section {
+            flex: 1;
+        }
+        .card-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            height: 14px;
+        }
+        .card-preview {
+            background: linear-gradient(135deg, #5a6cae, #3a4a8a);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-preview::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        }
+        .bank-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 22px;
+            letter-spacing: 3px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        .payment-system {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .saved-cards {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .expiry-fields {
+            display: flex;
+            gap: 10px;
+        }
+        .expiry-fields select {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Добавление банковской карты</h1>
+    
+    <div class="container">
+        <div class="form-section">
+            <form id="bankCardForm" class="card-form">
+                <div class="form-group">
+                    <label for="bankName">Название банка:</label>
+                    <input type="text" id="bankName" required>
+                    <div id="bankNameError" class="error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentSystem">Платежная система:</label>
+                    <select id="paymentSystem" required>
+                        <option value="">Выберите систему</option>
+                        <option value="VISA">VISA</option>
+                        <option value="MasterCard">MasterCard</option>
+                        <option value="МИР">МИР</option>
+                        <option value="American Express">American Express</option>
+                    </select>
+                    <div id="paymentSystemError" class="error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardNumber">Номер карты:</label>
+                    <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" required>
+                    <div id="cardNumberError" class="error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardHolder">Имя держателя карты:</label>
+                    <input type="text" id="cardHolder" required>
+                    <div id="cardHolderError" class="error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Срок действия:</label>
+                    <div class="expiry-fields">
+                        <select id="expiryMonth" required>
+                            <option value="">Месяц</option>
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                        <select id="expiryYear" required>
+                            <option value="">Год</option>
+                            <option value="23">23</option>
+                            <option value="24">24</option>
+                            <option value="25">25</option>
+                            <option value="26">26</option>
+                            <option value="27">27</option>
+                            <option value="28">28</option>
+                        </select>
+                    </div>
+                    <div id="expiryError" class="error"></div>
+                </div>
+                
+                <button type="submit">Добавить карту</button>
+            </form>
+        </div>
+        
+        <div class="preview-section">
+            <div class="card-preview" id="cardPreview">
+                <div class="bank-name" id="previewBankName">Название банка</div>
+                <div class="card-number" id="previewCardNumber">0000 0000 0000 0000</div>
+                <div class="card-details">
+                    <div class="card-holder" id="previewCardHolder">Имя держателя</div>
+                    <div class="card-expiry" id="previewCardExpiry">MM/YY</div>
+                </div>
+                <div class="payment-system" id="previewPaymentSystem">VISA</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="saved-cards">
+        <h2>Сохраненные карты</h2>
+        <table id="cardsTable">
+            <thead>
+                <tr>
+                    <th>Банк</th>
+                    <th>Платежная система</th>
+                    <th>Номер карты</th>
+                    <th>Держатель</th>
+                    <th>Срок действия</th>
+                </tr>
+            </thead>
+            <tbody id="cardsTableBody">
+                <!-- Карты будут добавляться сюда -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Получаем элементы DOM
+            const form = document.getElementById('bankCardForm');
+            const preview = {
+                bankName: document.getElementById('previewBankName'),
+                paymentSystem: document.getElementById('previewPaymentSystem'),
+                cardNumber: document.getElementById('previewCardNumber'),
+                cardHolder: document.getElementById('previewCardHolder'),
+                expiry: document.getElementById('previewCardExpiry')
+            };
+            
+            const inputs = {
+                bankName: document.getElementById('bankName'),
+                paymentSystem: document.getElementById('paymentSystem'),
+                cardNumber: document.getElementById('cardNumber'),
+                cardHolder: document.getElementById('cardHolder'),
+                expiryMonth: document.getElementById('expiryMonth'),
+                expiryYear: document.getElementById('expiryYear')
+            };
+            
+            const errors = {
+                bankName: document.getElementById('bankNameError'),
+                paymentSystem: document.getElementById('paymentSystemError'),
+                cardNumber: document.getElementById('cardNumberError'),
+                cardHolder: document.getElementById('cardHolderError'),
+                expiry: document.getElementById('expiryError')
+            };
+            
+            const cardsTableBody = document.getElementById('cardsTableBody');
+            
+            // Инициализация предпросмотра
+            updateCardPreview();
+            
+            // Обновление предпросмотра при изменении формы
+            form.addEventListener('input', updateCardPreview);
+            
+            // Обработка отправки формы
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (validateForm()) {
+                    addCardToTable();
+                    form.reset();
+                    updateCardPreview();
+                    clearErrors();
+                }
+            });
+            
+            // Форматирование номера карты при вводе
+            inputs.cardNumber.addEventListener('input', function(e) {
+                const cursorPosition = e.target.selectionStart;
+                const value = e.target.value.replace(/\s/g, '');
+                let formattedValue = '';
+                
+                for (let i = 0; i < value.length && i < 16; i++) {
+                    if (i > 0 && i % 4 === 0) formattedValue += ' ';
+                    formattedValue += value[i];
+                }
+                
+                e.target.value = formattedValue;
+                
+                // Восстановление позиции курсора
+                let newCursorPosition = cursorPosition;
+                if (value.length > e.target.value.length) {
+                    // Если мы удалили пробел, корректируем позицию
+                    const deletedChar = e.target.value[cursorPosition - 1];
+                    if (deletedChar === ' ') {
+                        newCursorPosition--;
+                    }
+                }
+                e.target.setSelectionRange(newCursorPosition, newCursorPosition);
+            });
+            
+            // Функция валидации формы
+            function validateForm() {
+                let isValid = true;
+                clearErrors();
+                
+                // Проверка названия банка
+                if (!inputs.bankName.value.trim()) {
+                    errors.bankName.textContent = 'Введите название банка';
+                    isValid = false;
+                }
+                
+                // Проверка платежной системы
+                if (!inputs.paymentSystem.value) {
+                    errors.paymentSystem.textContent = 'Выберите платежную систему';
+                    isValid = false;
+                }
+                
+                // Проверка номера карты
+                const cardNumber = inputs.cardNumber.value.replace(/\s/g, '');
+                if (!cardNumber || cardNumber.length !== 16 || !/^\d+$/.test(cardNumber)) {
+                    errors.cardNumber.textContent = 'Введите 16 цифр номера карты';
+                    isValid = false;
+                }
+                
+                // Проверка имени держателя
+                if (!inputs.cardHolder.value.trim()) {
+                    errors.cardHolder.textContent = 'Введите имя держателя';
+                    isValid = false;
+                }
+                
+                // Проверка срока действия
+                if (!inputs.expiryMonth.value || !inputs.expiryYear.value) {
+                    errors.expiry.textContent = 'Выберите месяц и год';
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            // Обновление предпросмотра карты
+            function updateCardPreview() {
+                // Банк
+                preview.bankName.textContent = inputs.bankName.value || 'Название банка';
+                
+                // Платежная система
+                preview.paymentSystem.textContent = inputs.paymentSystem.value || 'VISA';
+                
+                // Номер карты
+                const cardNumber = inputs.cardNumber.value.replace(/\s/g, '');
+                let formattedNumber = '';
+                for (let i = 0; i < cardNumber.length && i < 16; i++) {
+                    if (i > 0 && i % 4 === 0) formattedNumber += ' ';
+                    formattedNumber += cardNumber[i] || '';
+                }
+                preview.cardNumber.textContent = formattedNumber || '0000 0000 0000 0000';
+                
+                // Держатель карты
+                preview.cardHolder.textContent = inputs.cardHolder.value || 'Имя держателя';
+                
+                // Срок действия
+                const month = inputs.expiryMonth.value || 'MM';
+                const year = inputs.expiryYear.value || 'YY';
+                preview.expiry.textContent = `${month}/${year}`;
+            }
+            
+            // Добавление карты в таблицу
+            function addCardToTable() {
+                const row = document.createElement('tr');
+                
+                // Банк
+                const bankCell = document.createElement('td');
+                bankCell.textContent = inputs.bankName.value;
+                
+                // Платежная система
+                const systemCell = document.createElement('td');
+                systemCell.textContent = inputs.paymentSystem.value;
+                
+                // Номер карты (маскированный)
+                const cardNumber = inputs.cardNumber.value.replace(/\s/g, '');
+                const maskedNumber = '**** **** **** ' + cardNumber.slice(-4);
+                const numberCell = document.createElement('td');
+                numberCell.textContent = maskedNumber;
+                
+                // Держатель карты
+                const holderCell = document.createElement('td');
+                holderCell.textContent = inputs.cardHolder.value;
+                
+                // Срок действия
+                const expiryCell = document.createElement('td');
+                expiryCell.textContent = `${inputs.expiryMonth.value}/${inputs.expiryYear.value}`;
+                
+                // Добавляем ячейки в строку
+                row.append(bankCell, systemCell, numberCell, holderCell, expiryCell);
+                
+                // Добавляем строку в начало таблицы
+                cardsTableBody.insertBefore(row, cardsTableBody.firstChild);
+            }
+            
+            // Очистка сообщений об ошибках
+            function clearErrors() {
+                Object.values(errors).forEach(errorElement => {
+                    errorElement.textContent = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
